@@ -6,13 +6,14 @@ import {
   ConnectProps,
   UserModelState,
 } from '@/models/connect.d.ts';
-import LoginForm from './loginForm';
+import LoginForm from './LoginForm';
+import { loginParamsType } from '@/services/login';
 
 interface LoginProps extends ConnectProps {
   user: UserModelState;
 }
 
-const Login: React.FC<LoginProps> = ({ user, location }) => {
+const Login: React.FC<LoginProps> = ({ user, location, dispatch }) => {
   const { userId } = user.currentUser;
   const isLogin = !!userId;
 
@@ -21,10 +22,14 @@ const Login: React.FC<LoginProps> = ({ user, location }) => {
     return <Redirect to={from} />;
   }
 
+  const handleSubmit = (value: loginParamsType) => {
+    dispatch({ type: 'user/login', payload: value });
+  };
+
   return (
     <div className={styles.main}>
       <div className={styles.logo}></div>
-      <LoginForm></LoginForm>
+      <LoginForm handleSubmit={handleSubmit}></LoginForm>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { Effect, Reducer } from 'umi';
 // import { queryCurrent, queryDetail, fakeAccountLogout } from '@/services/user';
 import { queryCurrent } from '@/services/user';
-// import { fakeAccountLogin } from '@/services/login';
+import { fakeAccountLogin } from '@/services/login';
 import { Toast } from 'antd-mobile';
 import Icon from '@ant-design/icons/lib/components/AntdIcon';
 
@@ -42,7 +42,7 @@ export interface UserModelType {
   state: UserModelState;
   effects: {
     fetchCurrent: Effect;
-    // login: Effect;
+    login: Effect;
     // queryDetail: Effect;
     // logout: Effect;
   };
@@ -70,17 +70,17 @@ const UserModel: UserModelType = {
     //     payload: { currentUser: { ...response } },
     //   });
     // },
-    // *login({ payload }, { call, put }) {
-    //   const response = yield call(fakeAccountLogin, payload);
-    //   if (response.status === 1) {
-    //     yield put({
-    //       type: 'saveUser',
-    //       payload: { currentUser: { ...response } },
-    //     });
-    //   } else {
-    //     Toast.fail(response.msg || '系统开小差，请稍后再试~');
-    //   }
-    // },
+    *login({ payload }, { call, put }) {
+      const response = yield call(fakeAccountLogin, payload);
+      if (response.status === 1) {
+        yield put({
+          type: 'saveUser',
+          payload: { currentUser: { ...response } },
+        });
+      } else {
+        Toast.fail(response.msg || '系统开小差，请稍后再试~');
+      }
+    },
     // *queryDetail(_, { call, put }) {
     //   const response = yield call(queryDetail);
     //   yield put({ type: 'saveUser', payload: { detail: { ...response } } });
