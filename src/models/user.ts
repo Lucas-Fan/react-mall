@@ -1,6 +1,5 @@
 import { Effect, Reducer } from 'umi';
-// import { queryCurrent, queryDetail, fakeAccountLogout } from '@/services/user';
-import { queryCurrent } from '@/services/user';
+import { queryCurrent, queryDetail, fakeAccountLogout } from '@/services/user';
 import { fakeAccountLogin } from '@/services/login';
 import { Toast } from 'antd-mobile';
 import Icon from '@ant-design/icons/lib/components/AntdIcon';
@@ -12,19 +11,19 @@ interface CurrentUser {
 }
 
 interface DetailUser {
-  name?: string;
-  icon?: string;
-  userId?: string;
-  // email: string;
-  // phone: string;
-  // address: string;
-  // signature?: string;
-  // title?: string;
-  // tags?: {
-  //   key: string;
-  //   label: string;
-  // }[];
-  // country: string;
+  name: string;
+  icon: string;
+  userId: string;
+  email: string;
+  phone: string;
+  address: string;
+  signature?: string;
+  title?: string;
+  tags?: {
+    key: string;
+    label: string;
+  }[];
+  country: string;
 }
 
 export interface UserModelState {
@@ -43,11 +42,10 @@ export interface UserModelType {
   effects: {
     fetchCurrent: Effect;
     login: Effect;
-    // queryDetail: Effect;
-    // logout: Effect;
+    queryDetail: Effect;
+    logout: Effect;
   };
   reducers: {
-    saveCurrentUser: Reducer<UserModelState>;
     saveUser: Reducer<UserModelState>;
     clearUser: Reducer<UserModelState>;
   };
@@ -63,13 +61,13 @@ const UserModel: UserModelType = {
     },
   },
   effects: {
-    // *fetchCurrent(_, { call, put }) {
-    //   const response = yield call(queryCurrent);
-    //   yield put({
-    //     type: 'saveUser',
-    //     payload: { currentUser: { ...response } },
-    //   });
-    // },
+    *fetchCurrent(_, { call, put }) {
+      const response = yield call(queryCurrent);
+      yield put({
+        type: 'saveUser',
+        payload: { currentUser: { ...response } },
+      });
+    },
     *login({ payload }, { call, put }) {
       const response = yield call(fakeAccountLogin, payload);
       if (response.status === 1) {
@@ -81,26 +79,19 @@ const UserModel: UserModelType = {
         Toast.fail(response.msg || '系统开小差，请稍后再试~');
       }
     },
-    // *queryDetail(_, { call, put }) {
-    //   const response = yield call(queryDetail);
-    //   yield put({ type: 'saveUser', payload: { detail: { ...response } } });
-    // },
-    // *logout(_, { call, put }) {
-    //   const response = yield call(fakeAccountLogout);
-    //   yield put({
-    //     type: 'clearUser',
-    //     payload: { currentUser: {}, detail: { name: '', icon: '' } },
-    //   });
-    // },
-    *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
-      yield put({ type: 'saveCurrentUser', payload: response });
+    *queryDetail(_, { call, put }) {
+      const response = yield call(queryDetail);
+      yield put({ type: 'saveUser', payload: { detail: { ...response } } });
+    },
+    *logout(_, { call, put }) {
+      const response = yield call(fakeAccountLogout);
+      yield put({
+        type: 'clearUser',
+        payload: { currentUser: {}, detail: { name: '', icon: '' } },
+      });
     },
   },
   reducers: {
-    saveCurrentUser(state, action) {
-      return { ...state, currentUser: { ...action.payload } || {} };
-    },
     saveUser(state, action) {
       return { ...state, ...action.payload };
     },
